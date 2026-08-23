@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="Stocklot">
+  <rect width="100" height="100" rx="22" fill="#C9B6F5"/>
+  <!-- lid -->
+  <polygon points="28,40 50,22 72,40" fill="#F0C47A"/>
+  <polygon points="28,40 50,22 50,40" fill="#F6D08A"/>
+  <polygon points="50,40 50,22 72,40" fill="#D4A05A"/>
+  <!-- body -->
+  <rect x="26" y="38" width="48" height="44" rx="7" fill="#E8B86D"/>
+  <!-- eyes -->
+  <circle cx="42" cy="57" r="5" fill="#4A3020"/>
+  <circle cx="58" cy="57" r="5" fill="#4A3020"/>
+  <!-- cheeks -->
+  <circle cx="33" cy="63" r="4.5" fill="#F5A0B8"/>
+  <circle cx="67" cy="63" r="4.5" fill="#F5A0B8"/>
+  <!-- smile -->
+  <path d="M40 67 Q50 76 60 67" fill="none" stroke="#4A3020" stroke-width="3.5" stroke-linecap="round"/>
+</svg>

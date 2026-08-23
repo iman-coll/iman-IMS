@@ -1,0 +1,36 @@
+{
+  "url": "http://127.0.0.1:8080/",
+  "viewports": {
+    "desktop": {
+      "width": 1280,
+      "height": 800,
+      "status": 200,
+      "title": "Stocklot IMS",
+      "hasCanvas": false,
+      "bodyTextLen": 115,
+      "bodyTextHash": "b8f395e6e1de9ac6ae5bd69372259578d9974e229842e4e34924a4c73dd84340",
+      "bodyTextPrefix": "2,027 6 4 $64,361 Click any control on the picture — sidebar, KP",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder.png"
+    },
+    "mobile": {
+      "width": 390,
+      "height": 844,
+      "status": 200,
+      "title": "Stocklot IMS",
+      "hasCanvas": false,
+      "bodyTextLen": 1673,
+      "bodyTextHash": "22de5d2ed0f9ecd20291a1c74486b426116363bb8eaabfecd0026cc096d054f3",
+      "bodyTextPrefix": "IMS Inventory System Dashboard Items Orders Suppliers Locations ",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder-mobile.png"
+    }
+  },
+  "brandWarnings": [],
+  "authWarnings": [],
+  "verdictFile": "/workspace/screenshots/app-builder.json"
+}
