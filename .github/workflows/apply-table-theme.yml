@@ -1,0 +1,40 @@
+name: Apply IMS Rainbow Table Theme
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  apply-table-theme:
+    if: "!contains(github.event.head_commit.message, 'Apply IMS rainbow HTML tables')"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Convert Streamlit dataframes to themed HTML tables
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('dashboard_2026.py')
+          s = p.read_text(encoding='utf-8')
+          if 'def render_ims_table(' in s:
+              print('Theme already applied')
+              raise SystemExit(0)
+
+          marker = 'st.set_page_config('
+          insert = r'''\n\ndef render_ims_table(data, use_container_width=True, hide_index=True, **kwargs):\n    """Render IMS tables as controlled HTML so Streamlit cannot introduce white cells."""\n    import html as _html\n    if not isinstance(data, pd.DataFrame):\n        data = pd.DataFrame(data)\n    view = data.copy()\n    if hide_index:\n        view = view.reset_index(drop=True)\n    # Escape values so operational data is displayed safely.\n    view = view.map(lambda v: _html.escape(str(v)) if pd.notna(v) else '')\n    headers = ''.join(f'<th>{_html.escape(str(c))}</th>' for c in view.columns)\n    rows = []\n    for _, row in view.iterrows():\n        cells = ''.join(f'<td>{v}</td>' for v in row.tolist())\n        rows.append(f'<tr>{cells}</tr>')\n    table_html = f'''\n    <style>\n      .ims-table-wrap {{\n        margin: 10px 0 22px; padding: 2px; border-radius: 14px;\n        background: linear-gradient(90deg,#00D4FF,#7C5CFF,#FF4FD8,#FF9F43,#00E5A0,#26D9C2,#00D4FF);\n        box-shadow: 0 0 24px rgba(0,212,255,.10), 0 10px 28px rgba(0,0,0,.28);\n        overflow-x: auto;\n      }}\n      .ims-table {{ width: 100%; min-width: 760px; border-collapse: separate; border-spacing: 0;\n        overflow: hidden; border-radius: 12px; background:#303440; color:#fff; font-size:.84rem; }}\n      .ims-table th {{ background: linear-gradient(90deg,#252A38,#343846,#252A38); color:#fff;\n        font-weight:800; text-transform:uppercase; letter-spacing:.045em; padding:12px 11px;\n        border-bottom:2px solid #00D4FF; white-space:nowrap; }}\n      .ims-table td {{ background:#303440; color:#fff; padding:10px 11px; border-bottom:2px solid #414654;\n        border-right:2px solid #414654; white-space:nowrap; }}\n      .ims-table tbody tr:nth-child(even) td {{ background:#383C47; }}\n      .ims-table tbody tr:hover td {{ background:#474C59; box-shadow:inset 0 0 0 1px rgba(255,255,255,.10); }}\n      .ims-table th:nth-child(6n+1),.ims-table td:nth-child(6n+1) {{ border-left:2px solid #00D4FF; }}\n      .ims-table th:nth-child(6n+2),.ims-table td:nth-child(6n+2) {{ border-left:2px solid #7C5CFF; }}\n      .ims-table th:nth-child(6n+3),.ims-table td:nth-child(6n+3) {{ border-left:2px solid #FF4FD8; }}\n      .ims-table th:nth-child(6n+4),.ims-table td:nth-child(6n+4) {{ border-left:2px solid #FF9F43; }}\n      .ims-table th:nth-child(6n+5),.ims-table td:nth-child(6n+5) {{ border-left:2px solid #00E5A0; }}\n      .ims-table th:nth-child(6n+6),.ims-table td:nth-child(6n+6) {{ border-left:2px solid #26D9C2; }}\n      .ims-table tbody tr:nth-child(6n+1) td {{ border-bottom-color:#00D4FF; }}\n      .ims-table tbody tr:nth-child(6n+2) td {{ border-bottom-color:#7C5CFF; }}\n      .ims-table tbody tr:nth-child(6n+3) td {{ border-bottom-color:#FF4FD8; }}\n      .ims-table tbody tr:nth-child(6n+4) td {{ border-bottom-color:#FF9F43; }}\n      .ims-table tbody tr:nth-child(6n+5) td {{ border-bottom-color:#00E5A0; }}\n      .ims-table tbody tr:nth-child(6n+6) td {{ border-bottom-color:#26D9C2; }}\n    </style>\n    <div class="ims-table-wrap"><table class="ims-table"><thead><tr>{headers}</tr></thead><tbody>{''.join(rows)}</tbody></table></div>\n    '''\n    st.markdown(table_html, unsafe_allow_html=True)\n\n'''
+          idx = s.index(marker)
+          s = s[:idx] + insert + s[idx:]
+          s = s.replace('st.dataframe(', 'render_ims_table(')
+          p.write_text(s, encoding='utf-8')
+          print('Applied rainbow HTML table renderer')
+          PY
+      - name: Commit themed tables
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add dashboard_2026.py
+          git diff --cached --quiet || git commit -m "Apply IMS rainbow HTML tables"
+          git push
