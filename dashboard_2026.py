@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 from datetime import datetime, date
+from ims_table_theme import render_ims_table
 
 st.set_page_config(page_title="IMAN IMS — 2026", page_icon="📦", layout="wide", initial_sidebar_state="expanded")
 
@@ -35,6 +36,18 @@ input,textarea,[data-baseweb="select"]>div,[data-baseweb="input"]>div{background
 [data-testid="stTextInput"] input:focus,[data-testid="stNumberInput"] input:focus{border-color:var(--cyan)!important;box-shadow:0 0 0 1px var(--cyan),0 0 12px rgba(0,212,255,.14)!important}[data-testid="stCheckbox"] label span{color:var(--text)!important}[data-testid="stCheckbox"] [data-baseweb="checkbox"] div{border-color:#4B5374!important;background:#171B30!important}[data-testid="stCheckbox"] [aria-checked="true"] div{background:linear-gradient(135deg,var(--cyan),var(--violet),var(--pink))!important;border-color:var(--cyan)!important}
 [data-testid="stExpander"]{background:linear-gradient(145deg,#15192B,#211A35);border:1px solid var(--border);border-radius:12px}[data-testid="stAlert"]{background:linear-gradient(145deg,#15192B,#211A35);border:1px solid var(--border);border-radius:12px}[data-testid="stAlert"] p{color:#F4F7FB!important}[data-testid="stTabs"] [role="tab"]{color:var(--muted)!important}[data-testid="stTabs"] [aria-selected="true"]{color:var(--cyan)!important;border-bottom-color:var(--cyan)!important}[data-testid="stRadio"] label{color:var(--text)!important}[data-testid="stDateInput"] input,[data-testid="stTimeInput"] input{background:#303440!important;color:#FFFFFF!important;border-color:var(--violet)!important}hr{border-color:var(--border)!important}
 .stDownloadButton button{background:linear-gradient(90deg,#176A86,#6247B9,#A03C8C);border:1px solid #35506C;color:#fff}.stDownloadButton button:hover{background:linear-gradient(90deg,#008EAD,#7C5CFF,#FF4FD8);border-color:var(--cyan);color:#fff}[data-testid="stPlotlyChart"]{border-radius:12px}
+
+/* Deterministic custom IMS HTML tables: grey cells + white text + rainbow outlines */
+.ims-table-wrap{margin:8px 0 20px;border:2px solid transparent;border-radius:14px;padding:2px;background:linear-gradient(#111522,#111522) padding-box,linear-gradient(90deg,#00D4FF,#7C5CFF,#FF4FD8,#FF9F43,#00E5A0,#26D9C2,#00D4FF) border-box;box-shadow:0 0 24px rgba(0,212,255,.10),0 10px 30px rgba(0,0,0,.28)}
+.ims-table-scroll{overflow-x:auto;border-radius:10px}
+table.ims-table{width:100%;border-collapse:separate;border-spacing:0;background:#2F333E;color:#fff;font-size:.82rem;min-width:720px}
+.ims-table th{background:#252936;color:#fff!important;font-weight:800;text-align:left;padding:11px 12px;border-right:2px solid var(--accent);border-bottom:2px solid var(--accent);white-space:nowrap;letter-spacing:.02em}
+.ims-table td{background:#363A45;color:#fff!important;padding:10px 12px;border-right:2px solid var(--accent);border-bottom:1px solid rgba(141,152,174,.35);white-space:nowrap}
+.ims-table tbody tr:nth-child(even) td{background:#30343F}
+.ims-table tbody tr:hover td{background:#454A57!important;color:#fff!important;box-shadow:inset 0 0 0 1px rgba(0,212,255,.22)}
+.ims-table th:last-child,.ims-table td:last-child{border-right:0}
+.ims-table tbody tr:last-child td{border-bottom:0}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -114,7 +127,7 @@ elif st.session_state.page=="Items":
         z=q.lower(); x=x[x.apply(lambda r:z in str(r.Item).lower() or z in str(r.SKU).lower() or z in str(r.Category).lower(),axis=1)]
     if low_only: x=x[x.Qty<=x.Reorder]
     x["Stock Value"]=x.Qty*x["Unit Cost"]; x["Status"]=x.apply(lambda r:"🔴 Critical" if r.Qty<=r.Reorder*.5 else ("🟠 Low" if r.Qty<=r.Reorder else "🟢 Healthy"),axis=1)
-    st.caption(f"{len(x)} items"); st.dataframe(x[["Item","SKU","Category","Qty","Reorder","Stock Value","Location","Supplier ID","Status"]],use_container_width=True,hide_index=True)
+    st.caption(f"{len(x)} items"); render_ims_table(x[["Item","SKU","Category","Qty","Reorder","Stock Value","Location","Supplier ID","Status"]],use_container_width=True,hide_index=True)
     lowx=x[x.Qty<=x.Reorder]
     if not lowx.empty:
         st.subheader("Low-stock action queue"); selected=st.selectbox("Select item",lowx.Item.tolist()); r=lowx[lowx.Item==selected].iloc[0]; suggested=max(int(r.Reorder*2-r.Qty),int(r.Reorder))
@@ -122,7 +135,7 @@ elif st.session_state.page=="Items":
 elif st.session_state.page=="Orders":
     st.title("🛒 Orders"); st.markdown('<div class="subtle">Sales and purchase order control center.</div>',unsafe_allow_html=True)
     a,b,c,d=st.columns(4); a.metric("Total Orders",len(odf)); b.metric("Pending / Picking",int(odf.Status.isin(["Pending","Picking"]).sum())); c.metric("Purchase Orders",int((odf.Type=="Purchase").sum())); d.metric("Received",int((odf.Status=="Received").sum()))
-    typ=st.selectbox("Type",["All","Sales","Purchase"]); show=odf if typ=="All" else odf[odf.Type==typ]; st.dataframe(show,use_container_width=True,hide_index=True)
+    typ=st.selectbox("Type",["All","Sales","Purchase"]); show=odf if typ=="All" else odf[odf.Type==typ]; render_ims_table(show,use_container_width=True,hide_index=True)
     st.subheader("Order status distribution"); chart=chart_theme(px.bar(odf.Status.value_counts().rename_axis("Status").reset_index(name="Orders"),x="Status",y="Orders",text_auto=True)); chart.update_traces(marker_color=["#00D4FF","#7C5CFF","#FF4FD8","#26D9C2","#FF9F43"][:len(odf.Status.unique())]); st.plotly_chart(chart,use_container_width=True)
 elif st.session_state.page=="Receive & Issue":
     st.title("📥 Receive & Issue"); st.markdown('<div class="subtle">Record inbound receipts, outbound issues and inventory adjustments.</div>',unsafe_allow_html=True); left,right=st.columns(2)
@@ -134,21 +147,21 @@ elif st.session_state.page=="Receive & Issue":
         st.markdown('<div class="card"><h3>Issue Stock</h3>',unsafe_allow_html=True); item2=st.selectbox("Item to issue",df.Item.tolist(),key="issue_item"); qty2=st.number_input("Quantity to issue",min_value=1,value=1,step=1,key="issue_qty"); reason=st.selectbox("Reason",["Sales order","Internal use","Clinic dispense","Production","Damaged","Adjustment"])
         if st.button("Confirm Issue",use_container_width=True): st.warning(f"Issued {qty2} × {item2}. Reason: {reason}")
         st.markdown('</div>',unsafe_allow_html=True)
-    st.subheader("Recent movement history"); st.dataframe(mdf,use_container_width=True,hide_index=True)
+    st.subheader("Recent movement history"); render_ims_table(mdf,use_container_width=True,hide_index=True)
 elif st.session_state.page=="Suppliers":
-    st.title("🏢 Suppliers"); st.markdown('<div class="subtle">Supplier directory, categories and replenishment lead times.</div>',unsafe_allow_html=True); a,b,c=st.columns(3); a.metric("Suppliers",len(sdf)); b.metric("Categories",sdf.Category.nunique()); c.metric("Fastest Lead",sdf["Lead Time"].iloc[3]); st.dataframe(sdf,use_container_width=True,hide_index=True)
+    st.title("🏢 Suppliers"); st.markdown('<div class="subtle">Supplier directory, categories and replenishment lead times.</div>',unsafe_allow_html=True); a,b,c=st.columns(3); a.metric("Suppliers",len(sdf)); b.metric("Categories",sdf.Category.nunique()); c.metric("Fastest Lead",sdf["Lead Time"].iloc[3]); render_ims_table(sdf,use_container_width=True,hide_index=True)
     chart=chart_theme(px.bar(sdf,x="Supplier",y=sdf["Lead Time"].str.extract(r"(\d+)")[0].astype(int),title="Supplier Lead Time (days)")); chart.update_traces(marker_color=["#00D4FF","#7C5CFF","#26D9C2","#FF4FD8","#FF9F43","#4D8DFF"]); st.plotly_chart(chart,use_container_width=True)
 elif st.session_state.page=="Locations":
-    st.title("📍 Locations"); st.markdown('<div class="subtle">Warehouse, plant, clinic, kitchen and IT storage locations.</div>',unsafe_allow_html=True); st.dataframe(ldf,use_container_width=True,hide_index=True)
+    st.title("📍 Locations"); st.markdown('<div class="subtle">Warehouse, plant, clinic, kitchen and IT storage locations.</div>',unsafe_allow_html=True); render_ims_table(ldf,use_container_width=True,hide_index=True)
     stock_by=current.groupby("Location",as_index=False).Qty.sum().sort_values("Qty",ascending=False); chart=chart_theme(px.bar(stock_by,x="Location",y="Qty",text_auto=True,title="Units by Location")); chart.update_traces(marker_color=["#00D4FF","#7C5CFF","#26D9C2","#FF4FD8","#FF9F43","#4D8DFF"][:len(stock_by)]); st.plotly_chart(chart,use_container_width=True)
 elif st.session_state.page=="Alerts":
     st.title("🚨 Alerts"); low_df=current[current.Qty<=current.Reorder]; critical_df=current[current.Qty<=current.Reorder*.5]; expiring=["Insulin Vial 10ml","Crisp Lettuce","Whole Milk (L)"]; a,b,c=st.columns(3); a.metric("Low Stock",len(low_df)); b.metric("Critical",len(critical_df)); c.metric("Expiry Watch",len(expiring))
-    if not critical_df.empty: st.subheader("🔴 Critical stock"); st.dataframe(critical_df[["Item","SKU","Qty","Reorder","Location"]],use_container_width=True,hide_index=True)
-    st.subheader("🟠 Low stock"); st.dataframe(low_df[["Item","SKU","Qty","Reorder","Location"]],use_container_width=True,hide_index=True); st.subheader("⏳ Expiry watch"); st.warning("Insulin Vial 10ml · expires 28 Aug 2026"); st.warning("Crisp Lettuce · expires 25 Aug 2026"); st.warning("Whole Milk (L) · expires 26 Aug 2026")
+    if not critical_df.empty: st.subheader("🔴 Critical stock"); render_ims_table(critical_df[["Item","SKU","Qty","Reorder","Location"]],use_container_width=True,hide_index=True)
+    st.subheader("🟠 Low stock"); render_ims_table(low_df[["Item","SKU","Qty","Reorder","Location"]],use_container_width=True,hide_index=True); st.subheader("⏳ Expiry watch"); st.warning("Insulin Vial 10ml · expires 28 Aug 2026"); st.warning("Crisp Lettuce · expires 25 Aug 2026"); st.warning("Whole Milk (L) · expires 26 Aug 2026")
 elif st.session_state.page=="Reports":
     st.title("📊 Reports"); st.markdown('<div class="subtle">Compact management reporting derived from the same inventory dataset.</div>',unsafe_allow_html=True); r1,r2,r3,r4=st.columns(4); r1.metric("Inventory Value",money(value)); r2.metric("Units",f"{units:,}"); r3.metric("Low Stock",low); r4.metric("SKUs",len(current))
     category=current.groupby("Category",as_index=False).agg(Units=("Qty","sum"),Value=("Unit Cost",lambda s:0)); category["Value"]=current.groupby("Category").apply(lambda g:(g.Qty*g["Unit Cost"]).sum(),include_groups=False).values
-    chart=chart_theme(px.bar(category,x="Category",y="Value",text_auto=True,title="Inventory Value by Category")); chart.update_traces(marker_color=["#00D4FF","#7C5CFF","#FF4FD8","#26D9C2","#FF9F43","#4D8DFF"][:len(category)]); st.plotly_chart(chart,use_container_width=True); report=current.copy(); report["Stock Value"]=report.Qty*report["Unit Cost"]; st.dataframe(report[["Item","SKU","Industry","Category","Qty","Reorder","Stock Value","Location"]],use_container_width=True,hide_index=True); st.download_button("⬇️ Export current report CSV",report.to_csv(index=False),file_name="iman_ims_inventory_report.csv",mime="text/csv",use_container_width=True)
+    chart=chart_theme(px.bar(category,x="Category",y="Value",text_auto=True,title="Inventory Value by Category")); chart.update_traces(marker_color=["#00D4FF","#7C5CFF","#FF4FD8","#26D9C2","#FF9F43","#4D8DFF"][:len(category)]); st.plotly_chart(chart,use_container_width=True); report=current.copy(); report["Stock Value"]=report.Qty*report["Unit Cost"]; render_ims_table(report[["Item","SKU","Industry","Category","Qty","Reorder","Stock Value","Location"]],use_container_width=True,hide_index=True); st.download_button("⬇️ Export current report CSV",report.to_csv(index=False),file_name="iman_ims_inventory_report.csv",mime="text/csv",use_container_width=True)
 elif st.session_state.page=="Settings":
     st.title("⚙️ Settings"); st.markdown('<div class="subtle">Business configuration for the executive IMS layer.</div>',unsafe_allow_html=True); a,b=st.columns(2)
     with a:
