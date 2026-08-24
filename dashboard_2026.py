@@ -7,8 +7,8 @@ st.set_page_config(page_title="IMAN IMS — 2026", page_icon="📦", layout="wid
 
 st.markdown("""
 <style>
-:root{--bg:#0B0D19;--panel:#131625;--card:#181C30;--border:#262B44;--text:#F4F7FB;--muted:#8D98AE;--cyan:#00D4FF;--violet:#7C5CFF;--pink:#FF4FD8;--teal:#26D9C2;--orange:#FF9F43;--green:#00E5A0;--red:#FF647C}
-[data-testid="stAppViewContainer"]{background:radial-gradient(circle at 80% 0%,rgba(124,92,255,.08),transparent 32%),var(--bg);color:var(--text)}
+:root{--bg:#0B0D19;--panel:#131625;--card:#181C30;--border:#262B44;--text:#F4F7FB;--muted:#8D98AE;--cyan:#00D4FF;--violet:#7C5CFF;--pink:#FF4FD8;--teal:#26D9C2;--orange:#FF9F43;--green:#00E5A0;--red:#FF647C;--blue:#4D8DFF}
+[data-testid="stAppViewContainer"]{background:radial-gradient(circle at 80% 0%,rgba(124,92,255,.10),transparent 32%),radial-gradient(circle at 10% 80%,rgba(0,212,255,.06),transparent 28%),var(--bg);color:var(--text)}
 [data-testid="stHeader"]{background:rgba(11,13,25,.94)}
 [data-testid="stSidebar"]{background:linear-gradient(180deg,#090B14,#0D1020);border-right:1px solid var(--border)}
 .block-container{max-width:1550px;padding-top:1rem}
@@ -16,33 +16,51 @@ h1,h2,h3,h4,p,label{color:var(--text)!important}
 .subtle,.stCaption{color:var(--muted)!important}
 .card{background:linear-gradient(145deg,#1A1E33,#16192A);border:1px solid var(--border);border-radius:14px;padding:16px;box-shadow:0 10px 28px rgba(0,0,0,.24);height:100%}
 .kpi{position:relative;overflow:hidden;background:linear-gradient(145deg,#1B2037,#151829);border:1px solid var(--border);border-radius:14px;padding:15px 17px;height:116px}
-.kpi:after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;background:linear-gradient(90deg,var(--cyan),var(--violet),var(--pink))}
+.kpi:after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;background:linear-gradient(90deg,var(--cyan),var(--violet),var(--pink),var(--orange),var(--green))}
 .klabel{font-size:.72rem;text-transform:uppercase;letter-spacing:.09em;color:var(--muted)}
 .kvalue{font-size:1.55rem;font-weight:800;margin-top:6px;color:var(--text)}
 .kdelta{font-size:.77rem;color:var(--green);margin-top:4px}
 .activity{padding:9px 0;border-bottom:1px solid #252A40;font-size:.84rem}.activity:last-child{border:0}
-.badge{float:right;background:#222843;border:1px solid #343B5C;color:#B9C3D8;border-radius:999px;padding:2px 8px;font-size:.7rem}
+.badge{float:right;background:linear-gradient(90deg,#202743,#252039);border:1px solid #343B5C;color:#DCE4F5;border-radius:999px;padding:2px 8px;font-size:.7rem}
 .navhint{font-size:.72rem;color:#8D98AE;margin-top:-8px;margin-bottom:8px}
 [data-testid="stMetricValue"]{color:var(--text)}
-.stProgress>div>div>div>div{background:linear-gradient(90deg,var(--violet),var(--cyan),var(--green))}
-[data-testid="stDataFrame"]{border:1px solid var(--border);border-radius:12px;overflow:hidden}
-button[kind="secondary"]{border-color:#303653;background:#15192B;color:var(--text)}
-button[kind="secondary"]:hover{border-color:var(--cyan);color:var(--cyan);background:#181D33}
-button[kind="primary"]{background:linear-gradient(90deg,#176A86,#6247B9);border:1px solid #3B5E8A;color:white}
-button[kind="primary"]:hover{background:linear-gradient(90deg,#008EAD,#7C5CFF);border-color:var(--cyan)}
+[data-testid="stMetricLabel"]{color:var(--muted)!important}
+[data-testid="stMetricDelta"]{color:var(--green)!important}
+.stProgress>div>div>div>div{background:linear-gradient(90deg,var(--violet),var(--cyan),var(--teal),var(--green))}
+[data-testid="stDataFrame"]{border:1px solid var(--border);border-radius:12px;overflow:hidden;background:linear-gradient(145deg,#181C30,#15192B);box-shadow:0 8px 24px rgba(0,0,0,.18)}
+[data-testid="stDataFrame"] div{color:var(--text)}
+[data-testid="stDataFrame"] [role="columnheader"]{background:linear-gradient(90deg,#202744,#27213D)!important;color:#F4F7FB!important;border-bottom:1px solid #3B4262!important}
+[data-testid="stDataFrame"] [role="gridcell"]{background:#181C30!important;color:#E9EEFA!important;border-bottom:1px solid #252A40!important}
+[data-testid="stDataFrame"] [role="gridcell"]:hover{background:#202743!important;color:white!important}
+button[kind="secondary"]{border:1px solid #303653;background:linear-gradient(90deg,#15192B,#1B1930);color:var(--text)}
+button[kind="secondary"]:hover{border-color:var(--cyan);color:var(--cyan);background:linear-gradient(90deg,#18263A,#27203D)}
+button[kind="primary"]{background:linear-gradient(90deg,#176A86,#6247B9,#A03C8C);border:1px solid #3B5E8A;color:white}
+button[kind="primary"]:hover{background:linear-gradient(90deg,#008EAD,#7C5CFF,#FF4FD8);border-color:var(--cyan);box-shadow:0 0 18px rgba(0,212,255,.16)}
 [data-testid="stSidebar"] button{border-radius:10px!important;margin:3px 0!important;text-align:left!important}
 [data-testid="stSidebar"] button[kind="primary"]{box-shadow:0 0 18px rgba(0,212,255,.12);border-color:#35506C}
-input,textarea,[data-baseweb="select"]>div{background:#111527!important;color:var(--text)!important;border-color:#303653!important}
+input,textarea,[data-baseweb="select"]>div,[data-baseweb="input"]>div{background:linear-gradient(90deg,#111527,#17152B)!important;color:var(--text)!important;border:1px solid #303653!important;border-radius:9px!important}
+input:hover,textarea:hover,[data-baseweb="select"]>div:hover{border-color:#5A4E8E!important}
 [data-baseweb="select"] svg{fill:var(--cyan)!important}
-[data-baseweb="input"] input{color:var(--text)!important}
-[data-testid="stTextInput"] input:focus,[data-testid="stNumberInput"] input:focus{border-color:var(--cyan)!important;box-shadow:0 0 0 1px var(--cyan)!important}
+[data-baseweb="input"] input{color:var(--text)!important;background:transparent!important}
+[data-baseweb="popover"]{background:#15192B!important;border:1px solid #343B5C!important}
+[data-baseweb="menu"]{background:linear-gradient(180deg,#171B30,#211A35)!important;color:var(--text)!important;border:1px solid #3B4262!important}
+[data-baseweb="menu"] li{color:#E9EEFA!important;background:transparent!important}
+[data-baseweb="menu"] li:hover{background:linear-gradient(90deg,rgba(0,212,255,.16),rgba(124,92,255,.18),rgba(255,79,216,.12))!important;color:#fff!important}
+[data-testid="stTextInput"] input:focus,[data-testid="stNumberInput"] input:focus{border-color:var(--cyan)!important;box-shadow:0 0 0 1px var(--cyan),0 0 12px rgba(0,212,255,.14)!important}
 [data-testid="stCheckbox"] label span{color:var(--text)!important}
-[data-testid="stExpander"]{background:#15192B;border:1px solid var(--border);border-radius:12px}
-[data-testid="stAlert"]{background:#15192B;border:1px solid var(--border);border-radius:12px}
-[data-testid="stDataFrame"] div{color:var(--text)}
+[data-testid="stCheckbox"] [data-baseweb="checkbox"] div{border-color:#4B5374!important;background:#171B30!important}
+[data-testid="stCheckbox"] [aria-checked="true"] div{background:linear-gradient(135deg,var(--cyan),var(--violet))!important;border-color:var(--cyan)!important}
+[data-testid="stExpander"]{background:linear-gradient(145deg,#15192B,#211A35);border:1px solid var(--border);border-radius:12px}
+[data-testid="stAlert"]{background:linear-gradient(145deg,#15192B,#211A35);border:1px solid var(--border);border-radius:12px}
+[data-testid="stAlert"] p{color:#F4F7FB!important}
+[data-testid="stTabs"] [role="tab"]{color:var(--muted)!important}
+[data-testid="stTabs"] [aria-selected="true"]{color:var(--cyan)!important;border-bottom-color:var(--cyan)!important}
+[data-testid="stRadio"] label{color:var(--text)!important}
+[data-testid="stDateInput"] input,[data-testid="stTimeInput"] input{background:#111527!important;color:var(--text)!important;border-color:#303653!important}
 hr{border-color:var(--border)!important}
-.stDownloadButton button{background:linear-gradient(90deg,#176A86,#6247B9);border:1px solid #35506C;color:#fff}
-.stDownloadButton button:hover{border-color:var(--cyan);color:#fff}
+.stDownloadButton button{background:linear-gradient(90deg,#176A86,#6247B9,#A03C8C);border:1px solid #35506C;color:#fff}
+.stDownloadButton button:hover{background:linear-gradient(90deg,#008EAD,#7C5CFF,#FF4FD8);border-color:var(--cyan);color:#fff}
+[data-testid="stPlotlyChart"]{border-radius:12px}
 </style>
 """, unsafe_allow_html=True)
 
@@ -145,7 +163,7 @@ elif st.session_state.page=="Orders":
     st.title("🛒 Orders"); st.markdown('<div class="subtle">Sales and purchase order control center.</div>',unsafe_allow_html=True)
     a,b,c,d=st.columns(4); a.metric("Total Orders",len(odf)); b.metric("Pending / Picking",int(odf.Status.isin(["Pending","Picking"]).sum())); c.metric("Purchase Orders",int((odf.Type=="Purchase").sum())); d.metric("Received",int((odf.Status=="Received").sum()))
     typ=st.selectbox("Type",["All","Sales","Purchase"]); show=odf if typ=="All" else odf[odf.Type==typ]; st.dataframe(show,use_container_width=True,hide_index=True)
-    st.subheader("Order status distribution"); chart=chart_theme(px.bar(odf.Status.value_counts().rename_axis("Status").reset_index(name="Orders"),x="Status",y="Orders",text_auto=True)); chart.update_traces(marker_color="#7C5CFF"); st.plotly_chart(chart,use_container_width=True)
+    st.subheader("Order status distribution"); chart=chart_theme(px.bar(odf.Status.value_counts().rename_axis("Status").reset_index(name="Orders"),x="Status",y="Orders",text_auto=True)); chart.update_traces(marker_color=["#00D4FF","#7C5CFF","#FF4FD8","#26D9C2","#FF9F43"][:len(odf.Status.unique())]); st.plotly_chart(chart,use_container_width=True)
 
 elif st.session_state.page=="Receive & Issue":
     st.title("📥 Receive & Issue"); st.markdown('<div class="subtle">Record inbound receipts, outbound issues and inventory adjustments.</div>',unsafe_allow_html=True); left,right=st.columns(2)
@@ -161,11 +179,11 @@ elif st.session_state.page=="Receive & Issue":
 
 elif st.session_state.page=="Suppliers":
     st.title("🏢 Suppliers"); st.markdown('<div class="subtle">Supplier directory, categories and replenishment lead times.</div>',unsafe_allow_html=True); a,b,c=st.columns(3); a.metric("Suppliers",len(sdf)); b.metric("Categories",sdf.Category.nunique()); c.metric("Fastest Lead",sdf["Lead Time"].iloc[3]); st.dataframe(sdf,use_container_width=True,hide_index=True)
-    chart=chart_theme(px.bar(sdf,x="Supplier",y=sdf["Lead Time"].str.extract(r"(\d+)")[0].astype(int),title="Supplier Lead Time (days)")); chart.update_traces(marker_color="#00D4FF"); st.plotly_chart(chart,use_container_width=True)
+    chart=chart_theme(px.bar(sdf,x="Supplier",y=sdf["Lead Time"].str.extract(r"(\d+)")[0].astype(int),title="Supplier Lead Time (days)")); chart.update_traces(marker_color=["#00D4FF","#7C5CFF","#26D9C2","#FF4FD8","#FF9F43","#4D8DFF"]); st.plotly_chart(chart,use_container_width=True)
 
 elif st.session_state.page=="Locations":
     st.title("📍 Locations"); st.markdown('<div class="subtle">Warehouse, plant, clinic, kitchen and IT storage locations.</div>',unsafe_allow_html=True); st.dataframe(ldf,use_container_width=True,hide_index=True)
-    stock_by=current.groupby("Location",as_index=False).Qty.sum().sort_values("Qty",ascending=False); chart=chart_theme(px.bar(stock_by,x="Location",y="Qty",text_auto=True,title="Units by Location")); chart.update_traces(marker_color="#26D9C2"); st.plotly_chart(chart,use_container_width=True)
+    stock_by=current.groupby("Location",as_index=False).Qty.sum().sort_values("Qty",ascending=False); chart=chart_theme(px.bar(stock_by,x="Location",y="Qty",text_auto=True,title="Units by Location")); chart.update_traces(marker_color=["#00D4FF","#7C5CFF","#26D9C2","#FF4FD8","#FF9F43","#4D8DFF"][:len(stock_by)]); st.plotly_chart(chart,use_container_width=True)
 
 elif st.session_state.page=="Alerts":
     st.title("🚨 Alerts"); low_df=current[current.Qty<=current.Reorder]; critical_df=current[current.Qty<=current.Reorder*.5]; expiring=["Insulin Vial 10ml","Crisp Lettuce","Whole Milk (L)"]; a,b,c=st.columns(3); a.metric("Low Stock",len(low_df)); b.metric("Critical",len(critical_df)); c.metric("Expiry Watch",len(expiring))
@@ -175,7 +193,7 @@ elif st.session_state.page=="Alerts":
 elif st.session_state.page=="Reports":
     st.title("📊 Reports"); st.markdown('<div class="subtle">Compact management reporting derived from the same inventory dataset.</div>',unsafe_allow_html=True); r1,r2,r3,r4=st.columns(4); r1.metric("Inventory Value",money(value)); r2.metric("Units",f"{units:,}"); r3.metric("Low Stock",low); r4.metric("SKUs",len(current))
     category=current.groupby("Category",as_index=False).agg(Units=("Qty","sum"),Value=("Unit Cost",lambda s:0)); category["Value"]=current.groupby("Category").apply(lambda g:(g.Qty*g["Unit Cost"]).sum(),include_groups=False).values
-    chart=chart_theme(px.bar(category,x="Category",y="Value",text_auto=True,title="Inventory Value by Category")); chart.update_traces(marker_color="#7C5CFF"); st.plotly_chart(chart,use_container_width=True); report=current.copy(); report["Stock Value"]=report.Qty*report["Unit Cost"]; st.dataframe(report[["Item","SKU","Industry","Category","Qty","Reorder","Stock Value","Location"]],use_container_width=True,hide_index=True); st.download_button("⬇️ Export current report CSV",report.to_csv(index=False),file_name="iman_ims_inventory_report.csv",mime="text/csv",use_container_width=True)
+    chart=chart_theme(px.bar(category,x="Category",y="Value",text_auto=True,title="Inventory Value by Category")); chart.update_traces(marker_color=["#00D4FF","#7C5CFF","#FF4FD8","#26D9C2","#FF9F43","#4D8DFF"][:len(category)]); st.plotly_chart(chart,use_container_width=True); report=current.copy(); report["Stock Value"]=report.Qty*report["Unit Cost"]; st.dataframe(report[["Item","SKU","Industry","Category","Qty","Reorder","Stock Value","Location"]],use_container_width=True,hide_index=True); st.download_button("⬇️ Export current report CSV",report.to_csv(index=False),file_name="iman_ims_inventory_report.csv",mime="text/csv",use_container_width=True)
 
 elif st.session_state.page=="Settings":
     st.title("⚙️ Settings"); st.markdown('<div class="subtle">Business configuration for the executive IMS layer.</div>',unsafe_allow_html=True); a,b=st.columns(2)
