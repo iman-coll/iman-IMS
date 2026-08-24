@@ -9,3 +9,14 @@ primaryColor = "#30483A"
 backgroundColor = "#F7F3EC"
 secondaryBackgroundColor = "#FFFDF8"
 textColor = "#292724"
+font = "sans serif"
+borderColor = "#DED4C5"
+showWidgetBorder = true
+
+[theme.sidebar]
+base = "dark"
+backgroundColor = "#2B2520"
+secondaryBackgroundColor = "#3A332D"
+primaryColor = "#B89B67"
+textColor = "#FFFDF8"
+font = "sans serif"
