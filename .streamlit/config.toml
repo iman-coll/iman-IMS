@@ -12,6 +12,9 @@ textColor = "#292724"
 font = "sans serif"
 borderColor = "#DED4C5"
 showWidgetBorder = true
+baseRadius = "medium"
+buttonRadius = "medium"
+chartCategoricalColors = ["#30483A", "#B89B67", "#65734A", "#8B3A3A", "#756F67"]
 
 [theme.sidebar]
 base = "dark"
