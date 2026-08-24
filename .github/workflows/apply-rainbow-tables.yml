@@ -1,0 +1,68 @@
+name: Apply IMS rainbow tables
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'dashboard_2026.py'
+      - 'ims_table_theme.py'
+      - '.github/workflows/apply-rainbow-tables.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  patch-dashboard:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Patch dashboard table renderer
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('dashboard_2026.py')
+          text = p.read_text(encoding='utf-8')
+
+          import_line = 'from ims_table_theme import render_ims_table\n'
+          if import_line not in text:
+              marker = 'from datetime import datetime, date\n'
+              if marker in text:
+                  text = text.replace(marker, marker + import_line, 1)
+              else:
+                  text = import_line + text
+
+          if 'render_ims_table(' not in text:
+              text = text.replace('st.dataframe(', 'render_ims_table(')
+
+          css = r'''
+          /* Deterministic custom IMS HTML tables: grey cells + white text + rainbow outlines */
+          .ims-table-wrap{margin:8px 0 20px;border:2px solid transparent;border-radius:14px;padding:2px;background:linear-gradient(#111522,#111522) padding-box,linear-gradient(90deg,#00D4FF,#7C5CFF,#FF4FD8,#FF9F43,#00E5A0,#26D9C2,#00D4FF) border-box;box-shadow:0 0 24px rgba(0,212,255,.10),0 10px 30px rgba(0,0,0,.28)}
+          .ims-table-scroll{overflow-x:auto;border-radius:10px}
+          table.ims-table{width:100%;border-collapse:separate;border-spacing:0;background:#2F333E;color:#fff;font-size:.82rem;min-width:720px}
+          .ims-table th{background:#252936;color:#fff!important;font-weight:800;text-align:left;padding:11px 12px;border-right:2px solid var(--accent);border-bottom:2px solid var(--accent);white-space:nowrap;letter-spacing:.02em}
+          .ims-table td{background:#363A45;color:#fff!important;padding:10px 12px;border-right:2px solid var(--accent);border-bottom:1px solid rgba(141,152,174,.35);white-space:nowrap}
+          .ims-table tbody tr:nth-child(even) td{background:#30343F}
+          .ims-table tbody tr:hover td{background:#454A57!important;color:#fff!important;box-shadow:inset 0 0 0 1px rgba(0,212,255,.22)}
+          .ims-table th:last-child,.ims-table td:last-child{border-right:0}
+          .ims-table tbody tr:last-child td{border-bottom:0}
+          '''
+          if '.ims-table-wrap{' not in text:
+              text = text.replace('</style>', css + '\n</style>', 1)
+
+          p.write_text(text, encoding='utf-8')
+          PY
+
+      - name: Commit patched dashboard
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add dashboard_2026.py
+          if git diff --cached --quiet; then
+            echo 'No dashboard patch needed.'
+          else
+            git commit -m 'Fix IMS tables: grey cells white text rainbow outlines'
+            git push
+          fi
